@@ -1,55 +1,132 @@
-import React, { useState } from "react";
-import { makeStyles } from "@mui/styles";
-import { Dropdown, DropdownButton, Button } from "react-bootstrap";
-import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
+import React, { useState, useRef } from 'react';
+import { makeStyles } from '@mui/styles';
+import {
+  Dropdown,
+  DropdownButton,
+  Button,
+  Modal,
+  ModalBody,
+  ModalDialog,
+} from 'react-bootstrap';
+import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
+import axios from 'axios';
+
+const compilerData = [
+  {
+    python: {
+      language: 'python3',
+      versionIndex: '3',
+    },
+    java: {
+      language: 'java',
+      versionIndex: '3',
+    },
+    csharp: {
+      language: 'csharp',
+      versionIndex: '3',
+    },
+    cpp: {
+      language: 'cpp17',
+      versionIndex: '0',
+    },
+  },
+];
 
 const useStyles = makeStyles(() => ({
   editor: {
-    width: "80%",
-    height: "85vh",
-    // backgroundColor: 'red',
-    display: "flex",
-    flexDirection: "column",
+    width: '50%',
+    height: '85vh',
+    display: 'flex',
+    flexDirection: 'column',
   },
   toolbar: {
-    width: "100%",
-    // backgroundColor: 'green',
-    height: "38px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
+    width: '100%',
+    height: '38px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   childtoolbar: {
-    display: "flex",
+    display: 'flex',
   },
   textArea: {
-    width: "100%",
-    // backgroundColor: 'blue',
-    height: "500px",
-    marginTop: "1rem",
-    backgroundColor: "white",
-  },
-  dropdown: {
-    // backgroundColor: '#F94B25',
+    width: '100%',
+    height: '500px',
+    marginTop: '1rem',
+    backgroundColor: 'white',
   },
 }));
 
 function CodeEditor() {
   const classes = useStyles();
-  //   const [code, setCode] = React.useState(
-  //     `function add(a, b) {\n  return a + b;\n}`
-  //   );
-  const [value, setValue] = useState("Language");
-  const [theme, setTheme] = useState("theme");
+  const editorRef = useRef(null);
+  const [value, setValue] = useState('Language');
+  const [theme, setTheme] = useState('Theme');
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [output, setoutput] = useState('');
   const handleSelect = (e) => {
-    console.log(e);
     setValue(e);
   };
   const handleTheme = (e) => {
-    console.log(e);
     setTheme(e);
   };
+  const GetLanguageVersion = (lang) => {
+    if (lang === 'python3') {
+      return 3;
+    }
+    if (lang === 'java') {
+      return 3;
+    }
+    if (lang === 'csharp') {
+      return 3;
+    }
+    if (lang === 'cpp17') {
+      return 0;
+    }
+  };
+  const SubmitHandler = (e) => {
+    if (showValue().trim() === '') {
+      return;
+    }
+    if (value === 'Language') {
+      return;
+    }
+    const body = {
+      script: showValue(),
+      language: value,
+      versionIndex: GetLanguageVersion(value),
+      clientId: process.env.REACT_APP_CLIENT_ID,
+      clientSecret: process.env.REACT_APP_CLIENT_SECRET,
+    };
+    console.log(body);
+    const config = {
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      proxy: {
+        host: '104.236.174.88',
+        port: 3128,
+      },
+    };
 
+    axios
+      .post('https://api.jdoodle.com/execute', body, config)
+      .then((response) => {
+        console.log(response);
+        setoutput(response.data.output);
+        handleShow(e);
+      })
+      .catch((error) => {
+        console.error('There was an error!', error);
+      });
+  };
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor;
+  }
+
+  function showValue() {
+    return editorRef.current.getValue();
+  }
   return (
     <div className={classes.editor}>
       <div className={classes.toolbar}>
@@ -61,9 +138,9 @@ function CodeEditor() {
             onSelect={handleSelect}
           >
             <Dropdown.Item eventKey="java">Java</Dropdown.Item>
-            <Dropdown.Item eventKey="cpp">C++</Dropdown.Item>
-            <Dropdown.Item eventKey="python">Python</Dropdown.Item>
-            <Dropdown.Item eventKey="javascript">JavaScript</Dropdown.Item>
+            <Dropdown.Item eventKey="cpp17">C++</Dropdown.Item>
+            <Dropdown.Item eventKey="python3">Python</Dropdown.Item>
+            <Dropdown.Item eventKey="csharp">C#</Dropdown.Item>
           </DropdownButton>
         </div>
         <div className={classes.childtoolbar}>
@@ -81,12 +158,31 @@ function CodeEditor() {
       <div id="textarea" className={classes.textArea}>
         <Editor
           height="100%"
-          defaultLanguage={"java"}
+          defaultLanguage={'java'}
           language={value}
           defaultValue="// some comment"
           theme={theme}
+          onMount={handleEditorDidMount}
         />
       </div>
+      <Button
+        style={{ marginTop: '1rem' }}
+        onClick={(e) => SubmitHandler(e)}
+        color="primary"
+      >
+        Submit
+      </Button>
+      <Modal show={show} onHide={handleClose} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">Output</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{output}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
