@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import menue_icon from './../../assets/list.svg';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((menueVisible) => ({
   navbar: {
@@ -76,23 +77,33 @@ function Navbar() {
   return (
     <div className={classes.navbar}>
       <div>
-        <h2 className={classes.title}>
-          Code<span className={classes.span}>Together</span>
-        </h2>
+        <Link style={{ textDecoration: 'none' }} to="/">
+          <h2 className={classes.title}>
+            Code<span className={classes.span}>Together</span>
+          </h2>
+        </Link>
       </div>
       <ul className={classes.list}>
-        <li onClick={() => setMenue(false)} className={classes.li}>
-          Create Room
-        </li>
-        <li onClick={() => setMenue(false)} className={classes.li}>
-          Join Room
-        </li>
-        <li onClick={() => setMenue(false)} className={classes.li}>
-          About
-        </li>
-        <li onClick={() => setMenue(false)} className={classes.li}>
-          Contact
-        </li>
+        <Link style={{ textDecoration: 'none' }} to="/create-room">
+          <li onClick={() => setMenue(false)} className={classes.li}>
+            Create Room
+          </li>
+        </Link>
+        <Link style={{ textDecoration: 'none' }} to="/join-room">
+          <li onClick={() => setMenue(false)} className={classes.li}>
+            Join Room
+          </li>
+        </Link>
+        <Link style={{ textDecoration: 'none' }} to="/about">
+          <li onClick={() => setMenue(false)} className={classes.li}>
+            About
+          </li>
+        </Link>
+        <Link style={{ textDecoration: 'none' }} to="/contact">
+          <li onClick={() => setMenue(false)} className={classes.li}>
+            Contact
+          </li>
+        </Link>
       </ul>
       <li className={classes.ham_img}>
         <img

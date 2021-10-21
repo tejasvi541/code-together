@@ -1,10 +1,35 @@
 import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/navabr/Navbar';
+import Home from './pages/Home/Home';
+import CreateRoom from './pages/CreateRoom/CreateRoom';
+import About from './pages/About/About';
+import Contact from './pages/Contact/Contact';
+import JoinRoom from './pages/JoinRoom/JoinRoom';
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route exact path="/create-room">
+            <CreateRoom />
+          </Route>
+          <Route exact path="/join-room">
+            <JoinRoom />
+          </Route>
+          <Route exact path="/about">
+            <About />
+          </Route>
+          <Route exact path="/contact">
+            <Contact />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }
