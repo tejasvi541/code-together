@@ -16,6 +16,7 @@ const useStyles = makeStyles((menueVisible) => ({
     fontSize: '25px',
     color: '#F94B25',
     marginLeft: '2rem',
+    fontWeight: '800',
   },
   span: {
     color: '#78B64D',

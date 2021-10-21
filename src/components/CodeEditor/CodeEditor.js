@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 const useStyles = makeStyles(() => ({
   editor: {
@@ -13,13 +14,17 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     backgroundColor: 'green',
     height: '80px',
-    margin: '1rem',
+    display: 'flex',
+    alignItems: 'center',
   },
   textArea: {
     width: '100%',
     backgroundColor: 'blue',
     height: '500px',
-    margin: '1rem',
+    marginTop: '1rem',
+  },
+  dropdown: {
+    backgroundColor: '#F94B25',
   },
 }));
 
@@ -27,7 +32,18 @@ function CodeEditor() {
   const classes = useStyles();
   return (
     <div className={classes.editor}>
-      <div className={classes.toolbar}></div>
+      <div className={classes.toolbar}>
+        <DropdownButton
+          className={classes.dropdown}
+          id="dropdown-basic-button"
+          title="Language"
+        >
+          <Dropdown.Item>Java</Dropdown.Item>
+          <Dropdown.Item>C++</Dropdown.Item>
+          <Dropdown.Item>Python</Dropdown.Item>
+          <Dropdown.Item>JavaScript</Dropdown.Item>
+        </DropdownButton>
+      </div>
       <div className={classes.textArea}></div>
     </div>
   );
