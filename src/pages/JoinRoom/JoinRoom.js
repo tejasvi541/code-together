@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import CodeEditor from '../../components/CodeEditor/CodeEditor';
+import JoinRoomModal from '../../components/JoinRoomModal/JoinRoomModal';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -11,10 +12,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function JoinRoom() {
+  const [isCodeAvailable, setIsCodeAvailable] = useState(false);
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <CodeEditor />
+      {isCodeAvailable ? <CodeEditor /> : <JoinRoomModal />}
     </div>
   );
 }
