@@ -9,7 +9,7 @@ import {
   ModalDialog,
 } from 'react-bootstrap';
 import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
-import axios from 'axios';
+import { compileCode } from '../../api';
 
 const compilerData = [
   {
@@ -86,7 +86,7 @@ function CodeEditor() {
       return 0;
     }
   };
-  const SubmitHandler = (e) => {
+  const SubmitHandler = async (e) => {
     if (showValue().trim() === '') {
       return;
     }
@@ -101,24 +101,17 @@ function CodeEditor() {
       clientSecret: process.env.REACT_APP_CLIENT_SECRET,
     };
     console.log(body);
-    const config = {
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      proxy: {
-        host: '104.236.174.88',
-        port: 3128,
-      },
-    };
 
-    axios
-      .post('https://api.jdoodle.com/execute', body, config)
-      .then((response) => {
-        console.log(response);
-        setoutput(response.data.output);
-        handleShow(e);
-      })
-      .catch((error) => {
-        console.error('There was an error!', error);
-      });
+    try {
+      const res = await compileCode(body);
+      console.log(res);
+      if (res.data.statusCode == 200) {
+        setoutput(res.data.output);
+        handleShow();
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor;
