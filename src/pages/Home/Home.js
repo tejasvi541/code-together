@@ -1,46 +1,47 @@
-import React from 'react';
-import { makeStyles } from '@mui/styles';
-import github from './../../assets/github.svg';
+import React from "react";
+import { makeStyles } from "@mui/styles";
+import github from "./../../assets/github.svg";
+import socketIOClient from "socket.io-client";
 
 const useStyles = makeStyles(() => ({
   home: {
-    width: '100%',
-    height: '80vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "80vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   title_home: {
-    fontSize: '65px',
-    fontFamily: 'Prompt',
-    color: '#F94B25',
-    ['@media(max-Width: 692px)']: {
-      fontSize: '45px',
+    fontSize: "65px",
+    fontFamily: "Prompt",
+    color: "#F94B25",
+    ["@media(max-Width: 692px)"]: {
+      fontSize: "45px",
     },
   },
   span_bracket: {
-    color: '#ffff',
+    color: "#ffff",
   },
   descr: {
-    fontFamily: 'Prompt',
-    color: '#ffff',
-    fontWeight: '300',
-    fontSize: '20px',
-    width: '70%',
-    textAlign: 'center',
-    ['@media(max-Width: 692px)']: {
-      fontSize: '18px',
+    fontFamily: "Prompt",
+    color: "#ffff",
+    fontWeight: "300",
+    fontSize: "20px",
+    width: "70%",
+    textAlign: "center",
+    ["@media(max-Width: 692px)"]: {
+      fontSize: "18px",
     },
   },
   git_icon: {
-    marginTop: '0.5rem',
-    width: '36px',
-    height: '36px',
-    '&:hover': {
-      cursor: 'pointer',
-      width: '37px',
-      height: '37px',
+    marginTop: "0.5rem",
+    width: "36px",
+    height: "36px",
+    "&:hover": {
+      cursor: "pointer",
+      width: "37px",
+      height: "37px",
     },
   },
 }));
@@ -50,14 +51,18 @@ function Home() {
   return (
     <div className={classes.home}>
       <h1 className={classes.title_home}>
-        <span className={classes.span_bracket}>&lt;</span> CodeTogether{' '}
+        <span className={classes.span_bracket}>&lt;</span> CodeTogether{" "}
         <span className={classes.span_bracket}>/&gt;</span>
       </h1>
       <p className={classes.descr}>
         All real-time collaborative code editor. Create your coding room. Share
         your room code with your friends and enjoy coding together.
       </p>
-      <a href="https://github.com/naveen8801/code-together" target="_blank">
+      <a
+        href="https://github.com/naveen8801/code-together"
+        target="_blank"
+        rel="noreferrer"
+      >
         <img className={classes.git_icon} src={github} alt="gtihub-icon" />
       </a>
     </div>
