@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { makeStyles } from '@mui/styles';
+import React, { useState, useRef, useEffect } from "react";
+import { makeStyles } from "@mui/styles";
 import {
   Dropdown,
   DropdownButton,
@@ -7,53 +7,57 @@ import {
   Modal,
   ModalBody,
   ModalDialog,
-} from 'react-bootstrap';
-import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
-import { compileCode } from '../../api';
+} from "react-bootstrap";
+import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
+import { compileCode } from "../../api";
+
+import io from "socket.io-client";
+// Connecting backend
+const socket = io.connect("http://localhost:4001");
 
 const compilerData = [
   {
     python: {
-      language: 'python3',
-      versionIndex: '3',
+      language: "python3",
+      versionIndex: "3",
     },
     java: {
-      language: 'java',
-      versionIndex: '3',
+      language: "java",
+      versionIndex: "3",
     },
     csharp: {
-      language: 'csharp',
-      versionIndex: '3',
+      language: "csharp",
+      versionIndex: "3",
     },
     cpp: {
-      language: 'cpp17',
-      versionIndex: '0',
+      language: "cpp17",
+      versionIndex: "0",
     },
   },
 ];
 
 const useStyles = makeStyles(() => ({
   editor: {
-    width: '50%',
-    height: '85vh',
-    display: 'flex',
-    flexDirection: 'column',
+    width: "50%",
+    height: "85vh",
+    display: "flex",
+    flexDirection: "column",
   },
   toolbar: {
-    width: '100%',
-    height: '38px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: "100%",
+    height: "38px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   childtoolbar: {
-    display: 'flex',
+    display: "flex",
   },
   textArea: {
-    width: '100%',
-    height: '500px',
-    marginTop: '1rem',
-    backgroundColor: 'white',
+    width: "100%",
+    height: "500px",
+    marginTop: "1rem",
+    backgroundColor: "white",
   },
   btn: {
     marginTop: '1rem',
@@ -66,12 +70,13 @@ const useStyles = makeStyles(() => ({
 function CodeEditor() {
   const classes = useStyles();
   const editorRef = useRef(null);
-  const [value, setValue] = useState('Language');
-  const [theme, setTheme] = useState('Theme');
+  const [value, setValue] = useState("Language");
+  const [theme, setTheme] = useState("Theme");
+  const [codee, setCode] = useState("");
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [output, setoutput] = useState('');
+  const [output, setoutput] = useState("");
   const handleSelect = (e) => {
     setValue(e);
   };
@@ -79,24 +84,24 @@ function CodeEditor() {
     setTheme(e);
   };
   const GetLanguageVersion = (lang) => {
-    if (lang === 'python3') {
+    if (lang === "python3") {
       return 3;
     }
-    if (lang === 'java') {
+    if (lang === "java") {
       return 3;
     }
-    if (lang === 'csharp') {
+    if (lang === "csharp") {
       return 3;
     }
-    if (lang === 'cpp17') {
+    if (lang === "cpp17") {
       return 0;
     }
   };
   const SubmitHandler = async (e) => {
-    if (showValue().trim() === '') {
+    if (showValue().trim() === "") {
       return;
     }
-    if (value === 'Language') {
+    if (value === "Language") {
       return;
     }
     const body = {
@@ -126,6 +131,7 @@ function CodeEditor() {
   function showValue() {
     return editorRef.current.getValue();
   }
+
   return (
     <div className={classes.editor}>
       <div className={classes.toolbar}>
@@ -157,7 +163,7 @@ function CodeEditor() {
       <div id="textarea" className={classes.textArea}>
         <Editor
           height="100%"
-          defaultLanguage={'java'}
+          defaultLanguage={"java"}
           language={value}
           defaultValue="// some comment"
           theme={theme}
@@ -165,6 +171,7 @@ function CodeEditor() {
         />
       </div>
       <Button
+        style={{ marginTop: "1rem" }}
         className={classes.btn}
         onClick={(e) => SubmitHandler(e)}
         color="primary"
