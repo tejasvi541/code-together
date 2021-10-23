@@ -59,6 +59,12 @@ const useStyles = makeStyles(() => ({
     marginTop: "1rem",
     backgroundColor: "white",
   },
+  btn: {
+    marginTop: '1rem',
+    marginBottom: '1rem',
+    backgroundColor: '#78B64D!important',
+    borderColor: '#78B64D!important',
+  },
 }));
 
 function CodeEditor() {
@@ -166,6 +172,7 @@ function CodeEditor() {
       </div>
       <Button
         style={{ marginTop: "1rem" }}
+        className={classes.btn}
         onClick={(e) => SubmitHandler(e)}
         color="primary"
       >
@@ -177,7 +184,11 @@ function CodeEditor() {
         </Modal.Header>
         <Modal.Body>{output}</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button
+            className={classes.btn}
+            variant="secondary"
+            onClick={handleClose}
+          >
             Close
           </Button>
         </Modal.Footer>
