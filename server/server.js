@@ -27,6 +27,7 @@ const requestEndpoint = 'https://api.jdoodle.com/execute';
 let latestCodeVersion;
 let countClient = 0;
 let rooms = [];
+let users = [];
 
 // API ------------
 app.get('/latest-code', (req, res) => {
@@ -48,40 +49,47 @@ app.post('/compile', async (req, res) => {
 io.on('connection', (socket) => {
   countClient++;
   console.log(`New client connected ${socket.id} : number = ${countClient}`);
-
   socket.on('disconnect', () => {
-    console.log('Client disconnected');
-    countClient--;
-    if (countClient === 0) {
-      io.emit('code-unlocked', { uuid: 'server' });
+    if (users.length >= 1) {
+      const user = users.filter((i) => {
+        if (i.user_id == socket.id) {
+          return i;
+        }
+      });
+      if (user.length >= 1) {
+        const { user_id, room_id } = user[0];
+        const new_user = users.filter((i) => {
+          if (i.user_id !== user_id) {
+            return i;
+          }
+        });
+        countClient--;
+        io.to(room_id).emit('ROOM-CONNECTION', new_user);
+      }
     }
   });
 
-  socket.on('join_room', (roomcode) => {
-    socket.join(roomcode);
-    console.log('ROOM created ' + roomcode);
-    rooms.push(roomcode);
+  socket.on('JOIN-ROOM', ({ name, code }) => {
+    socket.join(code);
+    rooms.push({
+      code: code,
+    });
+    users.push({
+      name: name,
+      user_id: socket.id,
+      room_id: code,
+    });
+    const user = users.filter((i) => {
+      if (i.room_id === code) {
+        return i;
+      }
+    });
+    console.log('Total users in ' + code + ' are ' + user.length);
+    io.to(code).emit('ROOM-CONNECTION', user);
   });
 
-  socket.on('code', (data) => {
-    io.to(data.roomid).emit('get-code', data.newcode);
-    console.log(data);
-  });
-
-  socket.on('update-code', (msg) => {
-    console.log('update-code event');
-    latestCodeVersion = msg;
-    io.emit('update-code', msg);
-  });
-
-  socket.on('code-locked', (msg) => {
-    console.log('code-locked event');
-    io.emit('code-locked', msg);
-  });
-
-  socket.on('code-unlocked', (msg) => {
-    console.log('code-unlocked event');
-    io.emit('code-unlocked', msg);
+  socket.on('CODE-CHANGED', (data) => {
+    io.to(data.roomid).emit('CODE-CHANGED', data.newcode);
   });
 });
 

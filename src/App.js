@@ -6,8 +6,18 @@ import CreateRoom from './pages/CreateRoom/CreateRoom';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import JoinRoom from './pages/JoinRoom/JoinRoom';
+import { socket } from './socket';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateuserid } from './actions';
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    socket.on('USER-CONNECTED', (data) => {
+      console.log('Socket id = ' + data);
+    });
+  }, []);
   return (
     <div className="App">
       <Router>

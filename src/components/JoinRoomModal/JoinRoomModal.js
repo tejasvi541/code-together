@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@mui/styles';
 import { Button, Modal, ModalBody, ModalDialog } from 'react-bootstrap';
 import { socket } from '../../socket';
-import { updatestatekeyword, updateroomdetails } from './../../actions/index';
+import {
+  updatestatekeyword,
+  updateroomid,
+  updateuserid,
+} from './../../actions/index';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
@@ -59,10 +63,9 @@ function JoinRoomModal() {
   const data = useSelector((state) => state.isRoomCode);
   console.log(data);
   const JoinHandler = () => {
-    console.log('Room code is ' + roomcode);
-    socket.emit('join_room', roomcode);
+    socket.emit('JOIN-ROOM', { name: name, code: roomcode });
     dispatch(updatestatekeyword(true));
-    dispatch(updateroomdetails(roomcode));
+    dispatch(updateroomid(roomcode));
   };
 
   return (

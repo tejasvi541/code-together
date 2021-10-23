@@ -5,9 +5,16 @@ export const updatestatekeyword = (data) => {
   };
 };
 
-export const updateroomdetails = (data) => {
+export const updateroomid = (data) => {
   return {
-    type: 'UPDATE_ROOM_DETAILS',
+    type: 'UPDATE_ROOM_ID',
+    payload: data,
+  };
+};
+
+export const updateuserid = (data) => {
+  return {
+    type: 'UPDATE_USER_ID',
     payload: data,
   };
 };

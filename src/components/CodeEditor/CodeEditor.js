@@ -68,13 +68,14 @@ const useStyles = makeStyles(() => ({
 function CodeEditor() {
   const classes = useStyles();
   const editorRef = useRef(null);
+  const [UsersJoined, setusers] = useState([]);
   const [value, setValue] = useState('Language');
   const [theme, setTheme] = useState('Theme');
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [output, setoutput] = useState('');
-  const data = useSelector((state) => state.RoomDetails.RoomId);
+  const room_id = useSelector((state) => state.RoomDetails.RoomId);
   const [code, setcode] = useState('//Comment');
   const handleSelect = (e) => {
     setValue(e);
@@ -126,20 +127,24 @@ function CodeEditor() {
 
   function handleEditorChange(value, event) {
     setcode(value);
+    socket.emit('CODE-CHANGED', {
+      roomid: room_id,
+      newcode: value,
+    });
   }
 
   useEffect(() => {
-    socket.emit('code', {
-      roomid: data,
-      newcode: code,
-    });
-  }, [code]);
-
-  useEffect(() => {
-    socket.on('get-code', (data) => {
+    socket.on('CODE-CHANGED', (data) => {
       console.log('Updated code is ' + data);
+      setcode(data);
     });
-  }, [socket]);
+
+    socket.on('ROOM-CONNECTION', (data) => {
+      console.log(data);
+      setusers(data);
+    });
+    
+  }, []);
 
   return (
     <div className={classes.editor}>
@@ -155,6 +160,20 @@ function CodeEditor() {
             <Dropdown.Item eventKey="cpp17">C++</Dropdown.Item>
             <Dropdown.Item eventKey="python3">Python</Dropdown.Item>
             <Dropdown.Item eventKey="csharp">C#</Dropdown.Item>
+          </DropdownButton>
+        </div>
+        <div className={classes.childtoolbar}>
+          <DropdownButton
+            className={classes.dropdown}
+            id="dropdown-basic-button"
+            title={`Participants - ${UsersJoined.length}`}
+            onSelect={handleSelect}
+          >
+            {UsersJoined.map((i, index) => (
+              <Dropdown.Item key={index} eventKey="java">
+                {i.name}
+              </Dropdown.Item>
+            ))}
           </DropdownButton>
         </div>
         <div className={classes.childtoolbar}>
