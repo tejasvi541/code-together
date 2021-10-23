@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import CodeEditor from '../../components/CodeEditor/CodeEditor';
 import JoinRoomModal from '../../components/JoinRoomModal/JoinRoomModal';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -12,11 +14,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 function JoinRoom() {
-  const [isCodeAvailable, setIsCodeAvailable] = useState(false);
+  const data = useSelector((state) => state.isRoomCode);
+  console.log(data);
+  // const [isCodeAvailable, setIsCodeAvailable] = useState(false);
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      {isCodeAvailable ? <CodeEditor /> : <JoinRoomModal />}
+      {data ? <CodeEditor /> : <JoinRoomModal />}
     </div>
   );
 }

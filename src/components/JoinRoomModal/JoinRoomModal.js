@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@mui/styles';
 import { Button, Modal, ModalBody, ModalDialog } from 'react-bootstrap';
+import { socket } from '../../socket';
+import { updatestatekeyword, updateroomdetails } from './../../actions/index';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -49,13 +53,38 @@ const useStyles = makeStyles(() => ({
 
 function JoinRoomModal() {
   const classes = useStyles();
+  const [name, setname] = useState('');
+  const [roomcode, setcode] = useState('');
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.isRoomCode);
+  console.log(data);
+  const JoinHandler = () => {
+    console.log('Room code is ' + roomcode);
+    socket.emit('join_room', roomcode);
+    dispatch(updatestatekeyword(true));
+    dispatch(updateroomdetails(roomcode));
+  };
 
   return (
     <div className={classes.root}>
       <h2 className={classes.title}>Join Room</h2>
-      <input type="text" className={classes.input} placeholder="Nick Name" />
-      <input type="text" className={classes.input} placeholder="Room Code" />
-      <Button className={classes.btn}>Join</Button>
+      <input
+        value={name}
+        type="text"
+        className={classes.input}
+        placeholder="Nick Name"
+        onChange={(e) => setname(e.target.value)}
+      />
+      <input
+        value={roomcode}
+        type="code"
+        className={classes.input}
+        placeholder="Room Code"
+        onChange={(e) => setcode(e.target.value)}
+      />
+      <Button onClick={JoinHandler} className={classes.btn}>
+        Join
+      </Button>
     </div>
   );
 }
