@@ -29,9 +29,9 @@ let countClient = 0;
 let rooms = [];
 let users = [];
 
-// API ------------
-app.get("/latest-code", (req, res) => {
-  console.log("lates-code called");
+// API -----------
+app.get('/latest-code', (req, res) => {
+  console.log('lates-code called');
   if (latestCodeVersion) {
     res.json({ code: latestCodeVersion.code });
   } else {
