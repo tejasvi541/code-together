@@ -1,9 +1,9 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const axios = require('axios');
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const axios = require("axios");
 
 const port = process.env.PORT || 4001;
 
@@ -16,12 +16,12 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: "https://code-together-741b0.web.app",
+    methods: ["GET", "POST"],
   },
 });
 
-const requestEndpoint = 'https://api.jdoodle.com/execute';
+const requestEndpoint = "https://api.jdoodle.com/execute";
 
 // Server var ------------
 let latestCodeVersion;
@@ -29,31 +29,27 @@ let countClient = 0;
 let rooms = [];
 let users = [];
 
-// API ------------
-app.get('/', (req, res) => {
-  res.join("Welcome !")
-});
-
+// API -----------
 app.get('/latest-code', (req, res) => {
   console.log('lates-code called');
   if (latestCodeVersion) {
     res.json({ code: latestCodeVersion.code });
   } else {
-    res.json({ code: 'empty-code' });
+    res.json({ code: "empty-code" });
   }
 });
 
-app.post('/compile', async (req, res) => {
+app.post("/compile", async (req, res) => {
   axios
     .post(requestEndpoint, req.body)
     .then((response) => res.json(response.data));
 });
 
 // SOCKET -------------------
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   countClient++;
   console.log(`New client connected ${socket.id} : number = ${countClient}`);
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     if (users.length >= 1) {
       const user = users.filter((i) => {
         if (i.user_id == socket.id) {
@@ -68,16 +64,16 @@ io.on('connection', (socket) => {
           }
         });
         countClient--;
-        io.to(room_id).emit('ROOM-CONNECTION', users);
+        io.to(room_id).emit("ROOM-CONNECTION", users);
       }
     }
   });
 
-  socket.on('SHOW-OUT', ({ show, output, code }) => {
-    io.to(code).emit('SHOW-OUT', { show: show, output: output });
+  socket.on("SHOW-OUT", ({ show, output, code }) => {
+    io.to(code).emit("SHOW-OUT", { show: show, output: output });
   });
 
-  socket.on('JOIN-ROOM', ({ name, code }) => {
+  socket.on("JOIN-ROOM", ({ name, code }) => {
     socket.join(code);
     rooms.push({
       code: code,
@@ -92,12 +88,12 @@ io.on('connection', (socket) => {
         return i;
       }
     });
-    console.log('Total users in ' + code + ' are ' + user.length);
-    io.to(code).emit('ROOM-CONNECTION', user);
+    console.log("Total users in " + code + " are " + user.length);
+    io.to(code).emit("ROOM-CONNECTION", user);
   });
 
-  socket.on('CODE-CHANGED', (data) => {
-    io.to(data.roomid).emit('CODE-CHANGED', data.newcode);
+  socket.on("CODE-CHANGED", (data) => {
+    io.to(data.roomid).emit("CODE-CHANGED", data.newcode);
   });
 });
 

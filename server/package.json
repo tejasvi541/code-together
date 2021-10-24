@@ -4,7 +4,8 @@
   "description": "Backend for online Collaborative Code Editor",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
