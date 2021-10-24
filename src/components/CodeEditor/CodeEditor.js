@@ -118,6 +118,11 @@ function CodeEditor() {
       console.log(res);
       if (res.data.statusCode == 200) {
         setoutput(res.data.output);
+        socket.emit('SHOW-OUT', {
+          show: true,
+          output: res.data.output,
+          code: room_id,
+        });
         handleShow();
       }
     } catch (err) {
@@ -135,15 +140,19 @@ function CodeEditor() {
 
   useEffect(() => {
     socket.on('CODE-CHANGED', (data) => {
-      console.log('Updated code is ' + data);
       setcode(data);
     });
 
     socket.on('ROOM-CONNECTION', (data) => {
-      console.log(data);
       setusers(data);
     });
-    
+
+    socket.on('SHOW-OUT', ({show, output}) => {
+      setShow(show);
+      setoutput(output);
+    });
+
+    // socket.emit('SHOW-OUT', { show: show, code: room_id });
   }, []);
 
   return (

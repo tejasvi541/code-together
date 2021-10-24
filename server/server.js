@@ -69,6 +69,10 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('SHOW-OUT', ({ show, output, code }) => {
+    io.to(code).emit('SHOW-OUT', { show: show, output: output });
+  });
+
   socket.on('JOIN-ROOM', ({ name, code }) => {
     socket.join(code);
     rooms.push({

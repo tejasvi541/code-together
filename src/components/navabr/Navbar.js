@@ -85,11 +85,11 @@ function Navbar() {
         </Link>
       </div>
       <ul className={classes.list}>
-        <Link style={{ textDecoration: 'none' }} to="/create-room">
+        {/* <Link style={{ textDecoration: 'none' }} to="/create-room">
           <li onClick={() => setMenue(false)} className={classes.li}>
             Create Room
           </li>
-        </Link>
+        </Link> */}
         <Link style={{ textDecoration: 'none' }} to="/join-room">
           <li onClick={() => setMenue(false)} className={classes.li}>
             Join Room

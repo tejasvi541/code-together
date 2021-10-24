@@ -26,9 +26,9 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route exact path="/create-room">
+          {/* <Route exact path="/create-room">
             <CreateRoom />
-          </Route>
+          </Route> */}
           <Route exact path="/join-room">
             <JoinRoom />
           </Route>
