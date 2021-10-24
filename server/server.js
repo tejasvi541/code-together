@@ -30,6 +30,10 @@ let rooms = [];
 let users = [];
 
 // API ------------
+app.get('/', (req, res) => {
+  res.join("Welcome !")
+});
+
 app.get('/latest-code', (req, res) => {
   console.log('lates-code called');
   if (latestCodeVersion) {
