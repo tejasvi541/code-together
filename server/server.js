@@ -58,13 +58,13 @@ io.on('connection', (socket) => {
       });
       if (user.length >= 1) {
         const { user_id, room_id } = user[0];
-        const new_user = users.filter((i) => {
+        users = users.filter((i) => {
           if (i.user_id !== user_id) {
             return i;
           }
         });
         countClient--;
-        io.to(room_id).emit('ROOM-CONNECTION', new_user);
+        io.to(room_id).emit('ROOM-CONNECTION', users);
       }
     }
   });
