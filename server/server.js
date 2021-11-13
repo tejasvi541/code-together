@@ -4,6 +4,9 @@ const socketIo = require("socket.io");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios");
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const port = process.env.PORT || 4001;
 
@@ -29,9 +32,17 @@ let countClient = 0;
 let rooms = [];
 let users = [];
 
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MAIL, // your email address to send email from
+    pass: process.env.PASS, // your gmail account password
+  },
+});
+
 // API -----------
-app.get('/latest-code', (req, res) => {
-  console.log('lates-code called');
+app.get("/latest-code", (req, res) => {
+  console.log("lates-code called");
   if (latestCodeVersion) {
     res.json({ code: latestCodeVersion.code });
   } else {
@@ -43,6 +54,43 @@ app.post("/compile", async (req, res) => {
   axios
     .post(requestEndpoint, req.body)
     .then((response) => res.json(response.data));
+});
+
+app.post("/sendmail", (req, res) => {
+  try {
+    const mailOptions = {
+      from: req.body.email, // sender address
+      to: process.env.email, // list of receivers
+      html: `
+      <p>You have a new contact request.</p>
+      <h3>Contact Details</h3>
+      <ul>
+        <li>Name: ${req.body.name}</li>
+        <li>Email: ${req.body.email}</li>
+        <li>Message: ${req.body.message}</li>
+      </ul>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: "Something went wrong. Try again later",
+        });
+      } else {
+        res.send({
+          success: true,
+          message: "Thanks for contacting us. We will get back to you shortly",
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Something went wrong. Try again later",
+    });
+  }
 });
 
 // SOCKET -------------------
